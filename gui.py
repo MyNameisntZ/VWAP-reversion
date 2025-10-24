@@ -84,10 +84,14 @@ class VWAPReversionGUI:
         self.setup_dashboard()
         self.setup_trading_settings()
         self.setup_symbols()
+        self.setup_profiles()
         self.setup_logs()
         
         # Load profile data
         self.load_profile_data()
+        
+        # Update profiles listbox after GUI is fully initialized
+        self.root.after(100, self.update_profiles_listbox)
         
         # Start market status updates
         self.update_market_status()
@@ -439,16 +443,41 @@ class VWAPReversionGUI:
         help_text = "CSV Format: One symbol per line. Example: AAPL, NVDA, TSLA, AMZN, META"
         tk.Label(help_frame, text=help_text, bg="#ffffff", fg="#666666", 
                 font=("Arial", 9), wraplength=600).pack()
+    
+    def setup_profiles(self):
+        """Setup profiles management tab."""
+        self.profiles_frame = tk.Frame(self.notebook, bg="#ffffff")
+        self.notebook.add(self.profiles_frame, text="Profiles")
         
-        # Profile management
-        profile_frame = tk.LabelFrame(self.symbols_frame, text="Profile Management", 
+        # Title
+        tk.Label(self.profiles_frame, text="Profile Management", 
+                bg="#ffffff", fg="#000000", font=("Arial", 18, "bold")).pack(pady=20)
+        
+        # Current profile section
+        current_frame = tk.LabelFrame(self.profiles_frame, text="Current Profile", 
                                      bg="#ffffff", fg="#000000", font=("Arial", 12, "bold"))
-        profile_frame.pack(fill="x", padx=20, pady=10)
+        current_frame.pack(fill="x", padx=20, pady=10)
         
-        profile_buttons_frame = tk.Frame(profile_frame, bg="#ffffff")
+        # Current profile info
+        current_info_frame = tk.Frame(current_frame, bg="#ffffff")
+        current_info_frame.pack(fill="x", padx=10, pady=10)
+        
+        self.current_profile_var = tk.StringVar(value="No profile loaded")
+        tk.Label(current_info_frame, text="Current Profile:", bg="#ffffff", fg="#000000", 
+                font=("Arial", 10, "bold")).pack(side="left")
+        tk.Label(current_info_frame, textvariable=self.current_profile_var, bg="#ffffff", 
+                fg="#0b8fce", font=("Arial", 10, "bold")).pack(side="left", padx=10)
+        
+        # Profile management section
+        management_frame = tk.LabelFrame(self.profiles_frame, text="Profile Management", 
+                                        bg="#ffffff", fg="#000000", font=("Arial", 12, "bold"))
+        management_frame.pack(fill="x", padx=20, pady=10)
+        
+        # Profile buttons
+        profile_buttons_frame = tk.Frame(management_frame, bg="#ffffff")
         profile_buttons_frame.pack(fill="x", padx=10, pady=10)
         
-        save_profile_btn = tk.Button(profile_buttons_frame, text="Save Profile", 
+        save_profile_btn = tk.Button(profile_buttons_frame, text="Save Current Settings", 
                                     command=self.save_profile,
                                     bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
                                     relief="flat", padx=15, pady=5)
@@ -465,6 +494,42 @@ class VWAPReversionGUI:
                                       bg="#aa0000", fg="white", font=("Arial", 10, "bold"),
                                       relief="flat", padx=15, pady=5)
         delete_profile_btn.pack(side="left", padx=5)
+        
+        # Available profiles section
+        available_frame = tk.LabelFrame(self.profiles_frame, text="Available Profiles", 
+                                       bg="#ffffff", fg="#000000", font=("Arial", 12, "bold"))
+        available_frame.pack(fill="both", expand=True, padx=20, pady=10)
+        
+        # Profiles listbox
+        profiles_listbox_frame = tk.Frame(available_frame, bg="#ffffff")
+        profiles_listbox_frame.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        self.profiles_listbox = tk.Listbox(profiles_listbox_frame, bg="#f0f0f0", fg="#000000", 
+                                          font=("Arial", 11), height=8)
+        self.profiles_listbox.pack(side="left", fill="both", expand=True)
+        
+        # Scrollbar for profiles listbox
+        profiles_scrollbar = tk.Scrollbar(profiles_listbox_frame, orient="vertical", 
+                                         command=self.profiles_listbox.yview)
+        self.profiles_listbox.configure(yscrollcommand=profiles_scrollbar.set)
+        profiles_scrollbar.pack(side="right", fill="y")
+        
+        # Update profiles display
+        self.update_profiles_listbox()
+        
+        # Profile info section
+        info_frame = tk.LabelFrame(self.profiles_frame, text="Profile Information", 
+                                  bg="#ffffff", fg="#000000", font=("Arial", 12, "bold"))
+        info_frame.pack(fill="x", padx=20, pady=10)
+        
+        info_text_frame = tk.Frame(info_frame, bg="#ffffff")
+        info_text_frame.pack(fill="x", padx=10, pady=10)
+        
+        info_text = ("Profiles save all your current settings including symbols, position size, "
+                    "stop-loss, take-profit, VWAP thresholds, RSI settings, and refresh intervals. "
+                    "This allows you to quickly switch between different trading configurations.")
+        tk.Label(info_text_frame, text=info_text, bg="#ffffff", fg="#666666", 
+                font=("Arial", 9), wraplength=600, justify="left").pack()
     
     def setup_logs(self):
         """Setup logs tab."""
@@ -730,6 +795,17 @@ class VWAPReversionGUI:
             for symbol in current_symbols:
                 self.symbols_listbox.insert(tk.END, symbol)
     
+    def update_profiles_listbox(self):
+        """Update the profiles listbox display."""
+        if hasattr(self, 'profiles_listbox'):
+            self.profiles_listbox.delete(0, tk.END)
+            try:
+                profiles = self.profile_manager.list_profiles()
+                for profile in profiles:
+                    self.profiles_listbox.insert(tk.END, profile)
+            except Exception as e:
+                self.log_message(f"Error loading profiles: {e}")
+    
     def add_symbol(self):
         """Add a new symbol."""
         symbol = simpledialog.askstring("Add Symbol", "Enter symbol to add:")
@@ -841,6 +917,8 @@ class VWAPReversionGUI:
                 }
                 
                 self.profile_manager.save_profile(profile_name, profile_data)
+                self.update_profiles_listbox()
+                self.current_profile_var.set(profile_name)
                 self.log_message(f"Profile '{profile_name}' saved successfully")
                 messagebox.showinfo("Success", f"Profile '{profile_name}' saved successfully")
             
@@ -871,6 +949,7 @@ class VWAPReversionGUI:
                     self.auto_refresh.set(profile_data.get("auto_refresh", True))
                     
                     self.update_symbols_listbox()
+                    self.current_profile_var.set(profile_name)
                     self.log_message(f"Profile '{profile_name}' loaded successfully")
                     messagebox.showinfo("Success", f"Profile '{profile_name}' loaded successfully")
                 else:
@@ -890,6 +969,9 @@ class VWAPReversionGUI:
         if profile_name and profile_name in profiles:
             try:
                 self.profile_manager.delete_profile(profile_name)
+                self.update_profiles_listbox()
+                if self.current_profile_var.get() == profile_name:
+                    self.current_profile_var.set("No profile loaded")
                 self.log_message(f"Profile '{profile_name}' deleted successfully")
                 messagebox.showinfo("Success", f"Profile '{profile_name}' deleted successfully")
             
@@ -904,6 +986,7 @@ class VWAPReversionGUI:
             # If no profile data exists, use defaults
             if not profile_data:
                 self.log_message("No profile found - using default settings")
+                self.current_profile_var.set("No profile loaded")
                 return
             
             # Load profile data
@@ -917,6 +1000,9 @@ class VWAPReversionGUI:
             self.rsi_period.set(profile_data.get("rsi_period", str(Config.RSI_PERIOD)))
             self.refresh_interval.set(profile_data.get("refresh_interval", "5"))
             self.auto_refresh.set(profile_data.get("auto_refresh", True))
+            
+            # Update current profile display
+            self.current_profile_var.set("default")
             
             self.log_message("Profile data loaded successfully")
         
