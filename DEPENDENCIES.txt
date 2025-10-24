@@ -1,0 +1,59 @@
+VWAP Reversion Trading Bot v1.0 - Dependencies
+==============================================
+
+Required Python Packages:
+=========================
+
+1. alpaca-trade-api
+2. pandas
+3. numpy
+4. ta
+5. schedule
+6. python-dotenv
+7. requests
+8. Pillow
+9. pytz
+10. holidays
+
+Installation Commands:
+=====================
+
+Option 1: Install all at once
+python -m pip install alpaca-trade-api pandas numpy ta schedule python-dotenv requests Pillow pytz holidays
+
+Option 2: Install one by one
+python -m pip install alpaca-trade-api
+python -m pip install pandas
+python -m pip install numpy
+python -m pip install ta
+python -m pip install schedule
+python -m pip install python-dotenv
+python -m pip install requests
+python -m pip install Pillow
+python -m pip install pytz
+python -m pip install holidays
+
+Option 3: Update pip first (if needed)
+python -m pip install --upgrade pip
+python -m pip install alpaca-trade-api pandas numpy ta schedule python-dotenv requests Pillow pytz holidays
+
+Notes:
+======
+
+- Make sure you have Python 3.7 or higher installed
+- The 'ta' library is used for technical analysis indicators
+- 'alpaca-trade-api' is for connecting to Alpaca Paper Trading API
+- 'Pillow' is used for image handling (logo display)
+- 'pytz' and 'holidays' are used for market hours detection
+- All packages are available on PyPI and can be installed with pip
+
+Troubleshooting:
+===============
+
+If you get permission errors, try:
+python -m pip install --user [package_name]
+
+If you get SSL errors, try:
+python -m pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org [package_name]
+
+For Windows users, you might need to run Command Prompt as Administrator.
