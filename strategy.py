@@ -176,3 +176,4 @@ class VWAPReversionStrategy:
     def reset_signals(self):
         """Reset previous signals tracking."""
         self.previous_signals = {}
+

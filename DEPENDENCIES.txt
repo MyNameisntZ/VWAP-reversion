@@ -57,3 +57,4 @@ If you get SSL errors, try:
 python -m pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org [package_name]
 
 For Windows users, you might need to run Command Prompt as Administrator.
+

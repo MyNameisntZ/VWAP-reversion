@@ -1,0 +1,18 @@
+{
+  "name": "vwap 80 3 7",
+  "created": "2025-10-24T18:24:21.890313",
+  "last_modified": "2025-10-24T18:24:21.890323",
+  "version": "1.0",
+  "data": {
+    "symbols": "ANF, AAP, AMD, AEHR, AFRM, ABNB, ALK, BABA, ALLO, AMC, AMC, AAL, AEO, ADI, AAPL, AMAT, ARM, TEAM, AZO, BIDU, BBWI, BBY, BYND, BILI, BNTX, BLNK, BE, BA, BYD, AVGO, AI, CZR, CPRI, CCL, CAT, CELH, CHPT, CMG, CNK, NET, COIN, COST, CRSP, CROX, CRWD, DDOG, DE, DAL, DOCN, DDS, DG, DLTR, DPZ, DASH, DASH, DKNG, EDIT, EA, ENVX, ENPH, ETSY, EXAS, FSLY, FSR, FLUT, F, FCEL, GME, GE, GM, GILD, DNA, GLBE, GPS, GES, HBI, HAS, HD, HMC, HON, HUBS, ILMN, IMAX, INTC, NTLA, IONQ, IOVA, JD, JBLU, KLAC, KSS, KR, LRCX, LVS, LSCC, LEVI, LI, LYV, LOW, LCID, LCID, LULU, LYFT, LYFT, M, MSGE, MSGS, MARA, MRVI, MAT, META, MGM, MU, MRNA, MDB, MPWR, NVTS, NFLX, NKE, NIO, NCLH, NVAX, NVCR, NVCR, SMR, NVDA, NXPI, ORLY, OKTA, ON, PCAR, PACB, PLTR, PYPL, PDD, PENN, PINS, PLUG, PVH, QCOM, QS, RL, REGN, RGEN, RVLV, RIOT, RIVN, RIVN, HOOD, RBLX, ROKU, RCL, SAVE, SHOP, SIG, SIMO, SKX, SNAP, SOFI, SEDG, SONY, LUV, SPR, SBUX, STLA, MSTR, SPWR, RUN, RUN, SMCI, SYNA, TTWO, TPR, TGT, TER, TEX, TSLA, TXN, TOST, TM, TSCO, TTD, UBER, PATH, UAA, UAL, URI, UPST, URBN, VCYT, VRTX, VSCO, WMT, DIS, WBD, WEN, WING, WOLF, WYNN, XPEV, YUM, ZM, ZS, WING, WMT, WOLF, WWE, WYNN, XPEV, YUM, ZM, ZNGA, ZS",
+    "position_size": "80",
+    "stop_loss_pct": "3.0",
+    "take_profit_pct": "7",
+    "vwap_buy_threshold": "0.99",
+    "vwap_sell_threshold": "1.01",
+    "rsi_overbought": "70",
+    "rsi_period": "14",
+    "refresh_interval": "5",
+    "auto_refresh": true
+  }
+}

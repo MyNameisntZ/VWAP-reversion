@@ -275,3 +275,4 @@ This project is for educational and testing purposes. Use at your own risk.
 **Author**: Trevor Hunter  
 **Version**: 1.0  
 **Strategy**: VWAP Reversion for Intraday Mean Reversion Trading
+

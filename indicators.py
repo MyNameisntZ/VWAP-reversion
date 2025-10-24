@@ -126,3 +126,4 @@ def validate_data_quality(df, min_bars=5):
         return False
     
     return True
+
