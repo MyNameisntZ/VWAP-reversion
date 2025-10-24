@@ -118,20 +118,24 @@ class VWAPReversionGUI:
         style.map('TNotebook.Tab', background=[('selected', '#0b8fce')])
         
         # Configure button styles
-        style.configure('Accent.TButton', 
-                       background='#0b8fce', 
-                       foreground='white',
-                       font=('Arial', 10, 'bold'))
-        
-        style.configure('Success.TButton', 
-                       background='#00aa00', 
-                       foreground='white',
-                       font=('Arial', 10, 'bold'))
-        
-        style.configure('Danger.TButton', 
-                       background='#aa0000', 
-                       foreground='white',
-                       font=('Arial', 10, 'bold'))
+        try:
+            style.configure('Accent.TButton', 
+                           background='#0b8fce', 
+                           foreground='white',
+                           font=('Arial', 10, 'bold'))
+            
+            style.configure('Success.TButton', 
+                           background='#00aa00', 
+                           foreground='white',
+                           font=('Arial', 10, 'bold'))
+            
+            style.configure('Danger.TButton', 
+                           background='#aa0000', 
+                           foreground='white',
+                           font=('Arial', 10, 'bold'))
+        except Exception as e:
+            print(f"Warning: Could not configure custom button styles: {e}")
+            # Use default styles if custom styles fail
     
     def setup_layout(self):
         """Arrange widgets in the main window."""
@@ -237,16 +241,29 @@ class VWAPReversionGUI:
         control_frame = tk.Frame(self.dashboard_frame, bg="#ffffff")
         control_frame.pack(fill="x", padx=20, pady=20)
         
-        self.connect_btn = ttk.Button(control_frame, text="Connect to Alpaca", 
-                                     command=self.connect_to_alpaca, style="Accent.TButton")
+        # Create buttons with fallback to default style if custom styles fail
+        try:
+            self.connect_btn = ttk.Button(control_frame, text="Connect to Alpaca", 
+                                         command=self.connect_to_alpaca, style="Accent.TButton")
+        except:
+            self.connect_btn = ttk.Button(control_frame, text="Connect to Alpaca", 
+                                         command=self.connect_to_alpaca)
         self.connect_btn.pack(side="left", padx=(0, 10))
         
-        self.start_btn = ttk.Button(control_frame, text="Start Bot", 
-                                   command=self.start_bot, style="Success.TButton")
+        try:
+            self.start_btn = ttk.Button(control_frame, text="Start Bot", 
+                                       command=self.start_bot, style="Success.TButton")
+        except:
+            self.start_btn = ttk.Button(control_frame, text="Start Bot", 
+                                       command=self.start_bot)
         self.start_btn.pack(side="left", padx=(0, 10))
         
-        self.stop_btn = ttk.Button(control_frame, text="Stop Bot", 
-                                  command=self.stop_bot, style="Danger.TButton")
+        try:
+            self.stop_btn = ttk.Button(control_frame, text="Stop Bot", 
+                                      command=self.stop_bot, style="Danger.TButton")
+        except:
+            self.stop_btn = ttk.Button(control_frame, text="Stop Bot", 
+                                      command=self.stop_bot)
         self.stop_btn.pack(side="left", padx=(0, 10))
         
         # Bot status
