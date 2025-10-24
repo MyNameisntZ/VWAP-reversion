@@ -7,7 +7,7 @@ Version: 1.0
 """
 
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, simpledialog
 import threading
 import time
 import csv
@@ -400,6 +400,12 @@ class VWAPReversionGUI:
                                   relief="raised", bd=2, padx=8, pady=3)
         export_csv_btn.pack(side="left", padx=(0, 10))
         
+        remove_all_btn = tk.Button(symbol_buttons_frame, text="Remove All Symbols", 
+                                  command=self.remove_all_symbols,
+                                  bg="#aa0000", fg="white", font=("Arial", 9, "bold"),
+                                  relief="raised", bd=2, padx=8, pady=3)
+        remove_all_btn.pack(side="left", padx=(0, 10))
+        
         # Profile management
         profile_frame = tk.LabelFrame(self.symbols_frame, text="Profile Management", 
                                      bg="#ffffff", fg="#000000", font=("Arial", 12, "bold"))
@@ -684,7 +690,7 @@ class VWAPReversionGUI:
     
     def add_symbol(self):
         """Add a new symbol."""
-        symbol = tk.simpledialog.askstring("Add Symbol", "Enter symbol to add:")
+        symbol = simpledialog.askstring("Add Symbol", "Enter symbol to add:")
         if symbol:
             symbol = symbol.strip().upper()
             current_symbols = self.symbols.get()
@@ -699,7 +705,7 @@ class VWAPReversionGUI:
     
     def remove_symbol(self):
         """Remove a symbol."""
-        symbol = tk.simpledialog.askstring("Remove Symbol", "Enter symbol to remove:")
+        symbol = simpledialog.askstring("Remove Symbol", "Enter symbol to remove:")
         if symbol:
             symbol = symbol.strip().upper()
             current_symbols = [s.strip() for s in self.symbols.get().split(",")]
@@ -709,6 +715,24 @@ class VWAPReversionGUI:
                 self.log_message(f"Removed symbol: {symbol}")
             else:
                 messagebox.showinfo("Info", f"Symbol {symbol} not found")
+    
+    def remove_all_symbols(self):
+        """Remove all symbols."""
+        current_symbols = [s.strip() for s in self.symbols.get().split(",") if s.strip()]
+        
+        if not current_symbols:
+            messagebox.showinfo("Info", "No symbols to remove")
+            return
+        
+        # Ask for confirmation
+        result = messagebox.askyesno("Confirm", 
+                                   f"Are you sure you want to remove all {len(current_symbols)} symbols?\n\n"
+                                   f"Symbols: {', '.join(current_symbols)}")
+        
+        if result:
+            self.symbols.set("")
+            self.log_message(f"Removed all {len(current_symbols)} symbols")
+            messagebox.showinfo("Success", f"Removed all {len(current_symbols)} symbols")
     
     def import_csv(self):
         """Import symbols from CSV file."""
@@ -756,7 +780,7 @@ class VWAPReversionGUI:
     
     def save_profile(self):
         """Save current settings as a profile."""
-        profile_name = tk.simpledialog.askstring("Save Profile", "Enter profile name:")
+        profile_name = simpledialog.askstring("Save Profile", "Enter profile name:")
         if profile_name:
             try:
                 profile_data = {
@@ -786,7 +810,7 @@ class VWAPReversionGUI:
             messagebox.showinfo("Info", "No profiles found")
             return
         
-        profile_name = tk.simpledialog.askstring("Load Profile", f"Enter profile name:\nAvailable: {', '.join(profiles)}")
+        profile_name = simpledialog.askstring("Load Profile", f"Enter profile name:\nAvailable: {', '.join(profiles)}")
         if profile_name and profile_name in profiles:
             try:
                 profile_data = self.profile_manager.get_profile_data(profile_name)
@@ -817,7 +841,7 @@ class VWAPReversionGUI:
             messagebox.showinfo("Info", "No profiles found")
             return
         
-        profile_name = tk.simpledialog.askstring("Delete Profile", f"Enter profile name to delete:\nAvailable: {', '.join(profiles)}")
+        profile_name = simpledialog.askstring("Delete Profile", f"Enter profile name to delete:\nAvailable: {', '.join(profiles)}")
         if profile_name and profile_name in profiles:
             try:
                 self.profile_manager.delete_profile(profile_name)
