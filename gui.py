@@ -101,7 +101,7 @@ class VWAPReversionGUI:
     def setup_window(self):
         """Configure the main window."""
         self.root.title("VWAP Reversion Trading Bot v1.1")
-        self.root.geometry("1200x800")
+        self.root.geometry("1400x900")
         self.root.configure(bg="#ffffff")
         
         # Set window icon if available
