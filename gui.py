@@ -264,6 +264,12 @@ class VWAPReversionGUI:
                                  relief="raised", bd=2, padx=10, pady=5)
         self.stop_btn.pack(side="left", padx=(0, 10))
         
+        self.refresh_btn = tk.Button(control_frame, text="Refresh Data", 
+                                    command=self.refresh_data,
+                                    bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
+                                    relief="raised", bd=2, padx=10, pady=5)
+        self.refresh_btn.pack(side="left", padx=(0, 10))
+        
         # Bot status
         self.bot_status_var = tk.StringVar(value="Bot stopped")
         self.bot_status_label = tk.Label(control_frame, textvariable=self.bot_status_var, 
@@ -698,6 +704,30 @@ class VWAPReversionGUI:
         self.stop_btn.config(state="disabled")
         
         self.log_message("VWAP Reversion Bot stopped")
+    
+    def refresh_data(self):
+        """Manually refresh all data."""
+        try:
+            self.log_message("Refreshing data...")
+            
+            # Update market status
+            self.update_market_status()
+            
+            # Update account information
+            self.update_account_info()
+            
+            # Update symbols data if we have symbols
+            symbols_list = [s.strip().upper() for s in self.symbols.get().split(",") if s.strip()]
+            if symbols_list:
+                self.update_symbols_data()
+            else:
+                self.log_message("No symbols configured - add symbols in the Symbols tab")
+            
+            self.log_message("Data refresh completed")
+            
+        except Exception as e:
+            self.log_message(f"Error refreshing data: {e}")
+            messagebox.showerror("Error", f"Error refreshing data: {e}")
     
     def run_bot_loop(self):
         """Main bot loop running in separate thread."""
