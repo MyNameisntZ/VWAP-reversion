@@ -1,6 +1,9 @@
 """
-Profile Manager for Hybrid-Safe Trading Bot
+Profile Manager for VWAP Reversion Trading Bot v1.0
 Handles saving and loading user profiles with tickers and settings
+
+Author: Trevor Hunter
+Version: 1.0
 """
 
 import json
@@ -193,6 +196,18 @@ class ProfileManager:
     def get_current_profile_data(self) -> Dict[str, Any]:
         """Get data from the currently loaded profile."""
         return self.profile_data
+    
+    def get_profile_data(self, profile_name: str) -> Optional[Dict[str, Any]]:
+        """
+        Get profile data by name (alias for load_profile for compatibility).
+        
+        Args:
+            profile_name (str): Name of the profile to get
+            
+        Returns:
+            Dict: Profile data if successful, None otherwise
+        """
+        return self.load_profile(profile_name)
     
     def update_current_profile(self, data: Dict[str, Any]) -> None:
         """Update the current profile data."""
