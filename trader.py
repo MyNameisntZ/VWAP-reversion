@@ -1,6 +1,9 @@
 """
-Trader module for Hybrid-Safe trading bot.
+Trader module for VWAP Reversion Trading Bot v1.0.
 Handles order management and Alpaca API interactions.
+
+Author: Trevor Hunter
+Version: 1.0
 """
 
 import time
@@ -32,12 +35,19 @@ class AlpacaTrader:
         self.take_profit_pct = Config.TAKE_PROFIT_PCT
         
         # Test connection
+        self._connected = False
         try:
             account = self.api.get_account()
+            self._connected = True
             logger.info(f"✓ Connected to Alpaca. Account: {account.account_number}")
         except Exception as e:
             logger.error(f"Failed to connect to Alpaca: {e}")
             raise
+    
+    @property
+    def connected(self):
+        """Check if connected to Alpaca API."""
+        return self._connected
     
     def get_account_info(self):
         """
