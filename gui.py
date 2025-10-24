@@ -483,14 +483,14 @@ class VWAPReversionGUI:
                                     relief="flat", padx=15, pady=5)
         save_profile_btn.pack(side="left", padx=5)
         
-        load_profile_btn = tk.Button(profile_buttons_frame, text="Load Profile", 
-                                    command=self.load_profile,
+        load_profile_btn = tk.Button(profile_buttons_frame, text="Load Selected", 
+                                    command=self.load_selected_profile,
                                     bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
                                     relief="flat", padx=15, pady=5)
         load_profile_btn.pack(side="left", padx=5)
         
-        delete_profile_btn = tk.Button(profile_buttons_frame, text="Delete Profile", 
-                                      command=self.delete_profile,
+        delete_profile_btn = tk.Button(profile_buttons_frame, text="Delete Selected", 
+                                      command=self.delete_selected_profile,
                                       bg="#aa0000", fg="white", font=("Arial", 10, "bold"),
                                       relief="flat", padx=15, pady=5)
         delete_profile_btn.pack(side="left", padx=5)
@@ -505,7 +505,7 @@ class VWAPReversionGUI:
         profiles_listbox_frame.pack(fill="both", expand=True, padx=10, pady=10)
         
         self.profiles_listbox = tk.Listbox(profiles_listbox_frame, bg="#f0f0f0", fg="#000000", 
-                                          font=("Arial", 11), height=8)
+                                          font=("Arial", 11), height=8, selectmode=tk.SINGLE)
         self.profiles_listbox.pack(side="left", fill="both", expand=True)
         
         # Scrollbar for profiles listbox
@@ -513,6 +513,9 @@ class VWAPReversionGUI:
                                          command=self.profiles_listbox.yview)
         self.profiles_listbox.configure(yscrollcommand=profiles_scrollbar.set)
         profiles_scrollbar.pack(side="right", fill="y")
+        
+        # Bind double-click to load profile
+        self.profiles_listbox.bind('<Double-1>', self.load_selected_profile)
         
         # Update profiles display
         self.update_profiles_listbox()
@@ -527,7 +530,8 @@ class VWAPReversionGUI:
         
         info_text = ("Profiles save all your current settings including symbols, position size, "
                     "stop-loss, take-profit, VWAP thresholds, RSI settings, and refresh intervals. "
-                    "This allows you to quickly switch between different trading configurations.")
+                    "Select a profile from the list below and click 'Load Selected' or double-click to load. "
+                    "Click 'Delete Selected' to remove a profile.")
         tk.Label(info_text_frame, text=info_text, bg="#ffffff", fg="#666666", 
                 font=("Arial", 9), wraplength=600, justify="left").pack()
     
@@ -925,48 +929,57 @@ class VWAPReversionGUI:
             except Exception as e:
                 messagebox.showerror("Error", f"Error saving profile: {e}")
     
-    def load_profile(self):
-        """Load a saved profile."""
-        profiles = self.profile_manager.list_profiles()
-        if not profiles:
-            messagebox.showinfo("Info", "No profiles found")
+    def load_selected_profile(self, event=None):
+        """Load the selected profile from the listbox."""
+        selection = self.profiles_listbox.curselection()
+        if not selection:
+            messagebox.showinfo("Info", "Please select a profile from the list")
             return
         
-        profile_name = simpledialog.askstring("Load Profile", f"Enter profile name:\nAvailable: {', '.join(profiles)}")
-        if profile_name and profile_name in profiles:
-            try:
-                profile_data = self.profile_manager.get_profile_data(profile_name)
-                if profile_data:
-                    self.symbols.set(profile_data.get("symbols", ""))
-                    self.position_size.set(profile_data.get("position_size", str(Config.POSITION_SIZE)))
-                    self.stop_loss_pct.set(profile_data.get("stop_loss_pct", str(Config.STOP_LOSS_PCT * 100)))
-                    self.take_profit_pct.set(profile_data.get("take_profit_pct", str(Config.TAKE_PROFIT_PCT * 100)))
-                    self.vwap_buy_threshold.set(profile_data.get("vwap_buy_threshold", str(Config.VWAP_BUY_THRESHOLD)))
-                    self.vwap_sell_threshold.set(profile_data.get("vwap_sell_threshold", str(Config.VWAP_SELL_THRESHOLD)))
-                    self.rsi_overbought.set(profile_data.get("rsi_overbought", str(Config.RSI_OVERBOUGHT)))
-                    self.rsi_period.set(profile_data.get("rsi_period", str(Config.RSI_PERIOD)))
-                    self.refresh_interval.set(profile_data.get("refresh_interval", "5"))
-                    self.auto_refresh.set(profile_data.get("auto_refresh", True))
-                    
-                    self.update_symbols_listbox()
-                    self.current_profile_var.set(profile_name)
-                    self.log_message(f"Profile '{profile_name}' loaded successfully")
-                    messagebox.showinfo("Success", f"Profile '{profile_name}' loaded successfully")
-                else:
-                    messagebox.showerror("Error", f"Profile '{profile_name}' not found")
-            
-            except Exception as e:
-                messagebox.showerror("Error", f"Error loading profile: {e}")
+        profile_name = self.profiles_listbox.get(selection[0])
+        try:
+            profile_data = self.profile_manager.get_profile_data(profile_name)
+            if profile_data:
+                self.symbols.set(profile_data.get("symbols", ""))
+                self.position_size.set(profile_data.get("position_size", str(Config.POSITION_SIZE)))
+                self.stop_loss_pct.set(profile_data.get("stop_loss_pct", str(Config.STOP_LOSS_PCT * 100)))
+                self.take_profit_pct.set(profile_data.get("take_profit_pct", str(Config.TAKE_PROFIT_PCT * 100)))
+                self.vwap_buy_threshold.set(profile_data.get("vwap_buy_threshold", str(Config.VWAP_BUY_THRESHOLD)))
+                self.vwap_sell_threshold.set(profile_data.get("vwap_sell_threshold", str(Config.VWAP_SELL_THRESHOLD)))
+                self.rsi_overbought.set(profile_data.get("rsi_overbought", str(Config.RSI_OVERBOUGHT)))
+                self.rsi_period.set(profile_data.get("rsi_period", str(Config.RSI_PERIOD)))
+                self.refresh_interval.set(profile_data.get("refresh_interval", "5"))
+                self.auto_refresh.set(profile_data.get("auto_refresh", True))
+                
+                self.update_symbols_listbox()
+                self.current_profile_var.set(profile_name)
+                self.log_message(f"Profile '{profile_name}' loaded successfully")
+                messagebox.showinfo("Success", f"Profile '{profile_name}' loaded successfully")
+            else:
+                messagebox.showerror("Error", f"Profile '{profile_name}' not found")
+        
+        except Exception as e:
+            messagebox.showerror("Error", f"Error loading profile: {e}")
     
-    def delete_profile(self):
-        """Delete a saved profile."""
-        profiles = self.profile_manager.list_profiles()
-        if not profiles:
-            messagebox.showinfo("Info", "No profiles found")
+    def load_profile(self):
+        """Load a saved profile (legacy method for compatibility)."""
+        self.load_selected_profile()
+    
+    def delete_selected_profile(self):
+        """Delete the selected profile from the listbox."""
+        selection = self.profiles_listbox.curselection()
+        if not selection:
+            messagebox.showinfo("Info", "Please select a profile from the list")
             return
         
-        profile_name = simpledialog.askstring("Delete Profile", f"Enter profile name to delete:\nAvailable: {', '.join(profiles)}")
-        if profile_name and profile_name in profiles:
+        profile_name = self.profiles_listbox.get(selection[0])
+        
+        # Ask for confirmation
+        result = messagebox.askyesno("Confirm Delete", 
+                                   f"Are you sure you want to delete profile '{profile_name}'?\n\n"
+                                   f"This action cannot be undone.")
+        
+        if result:
             try:
                 self.profile_manager.delete_profile(profile_name)
                 self.update_profiles_listbox()
@@ -977,6 +990,10 @@ class VWAPReversionGUI:
             
             except Exception as e:
                 messagebox.showerror("Error", f"Error deleting profile: {e}")
+    
+    def delete_profile(self):
+        """Delete a saved profile (legacy method for compatibility)."""
+        self.delete_selected_profile()
     
     def load_profile_data(self):
         """Load profile data into GUI variables."""
