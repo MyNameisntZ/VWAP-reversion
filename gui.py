@@ -1,9 +1,9 @@
 """
-VWAP Reversion Trading Bot GUI v1.0 - With Logo and Updated Colors
+VWAP Reversion Trading Bot GUI v1.1 - With Logo and Updated Colors
 With CSV import/export, customizable data refresh, profile management, and market hours detection
 
 Author: Trevor Hunter
-Version: 1.0
+Version: 1.1
 """
 
 import tkinter as tk
@@ -98,7 +98,7 @@ class VWAPReversionGUI:
     
     def setup_window(self):
         """Configure the main window."""
-        self.root.title("VWAP Reversion Trading Bot v1.0")
+        self.root.title("VWAP Reversion Trading Bot v1.1")
         self.root.geometry("1200x800")
         self.root.configure(bg="#ffffff")
         
