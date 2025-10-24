@@ -489,6 +489,12 @@ class VWAPReversionGUI:
                                     relief="flat", padx=15, pady=5)
         save_profile_btn.pack(side="left", padx=5)
         
+        update_profile_btn = tk.Button(profile_buttons_frame, text="Update Current Profile", 
+                                      command=self.update_current_profile,
+                                      bg="#00aa00", fg="white", font=("Arial", 10, "bold"),
+                                      relief="flat", padx=15, pady=5)
+        update_profile_btn.pack(side="left", padx=5)
+        
         load_profile_btn = tk.Button(profile_buttons_frame, text="Load Selected", 
                                     command=self.load_selected_profile,
                                     bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
@@ -958,6 +964,37 @@ class VWAPReversionGUI:
             
             except Exception as e:
                 messagebox.showerror("Error", f"Error saving profile: {e}")
+    
+    def update_current_profile(self):
+        """Update the current profile with current settings."""
+        current_profile = self.current_profile_var.get()
+        
+        if current_profile == "No profile loaded":
+            messagebox.showinfo("Info", "No profile is currently loaded. Please load a profile first or save current settings as a new profile.")
+            return
+        
+        try:
+            profile_data = {
+                "symbols": self.symbols.get(),
+                "position_size": self.position_size.get(),
+                "stop_loss_pct": self.stop_loss_pct.get(),
+                "take_profit_pct": self.take_profit_pct.get(),
+                "vwap_buy_threshold": self.vwap_buy_threshold.get(),
+                "vwap_sell_threshold": self.vwap_sell_threshold.get(),
+                "rsi_overbought": self.rsi_overbought.get(),
+                "rsi_period": self.rsi_period.get(),
+                "refresh_interval": self.refresh_interval.get(),
+                "auto_refresh": self.auto_refresh.get()
+            }
+            
+            self.profile_manager.save_profile(current_profile, profile_data)
+            self.update_profiles_listbox()
+            self.log_message(f"Profile '{current_profile}' updated successfully")
+            messagebox.showinfo("Success", f"Profile '{current_profile}' updated successfully")
+        
+        except Exception as e:
+            self.log_message(f"Error updating profile: {e}")
+            messagebox.showerror("Error", f"Error updating profile: {e}")
     
     def load_selected_profile(self, event=None):
         """Load the selected profile from the listbox."""
