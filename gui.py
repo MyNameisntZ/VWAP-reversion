@@ -496,13 +496,12 @@ class VWAPReversionGUI:
     def connect_to_alpaca(self):
         """Connect to Alpaca API."""
         try:
-            if self.trader.connect():
-                self.log_message("✓ Connected to Alpaca API")
-                self.update_account_info()
-                self.connect_btn.config(text="Connected", state="disabled")
-            else:
-                self.log_message("✗ Failed to connect to Alpaca API")
-                messagebox.showerror("Connection Error", "Failed to connect to Alpaca API")
+            # Test the connection by getting account info
+            account = self.trader.api.get_account()
+            self.log_message("✓ Connected to Alpaca API")
+            self.log_message(f"Account: {account.account_number}")
+            self.update_account_info()
+            self.connect_btn.config(text="Connected", state="disabled")
         except Exception as e:
             self.log_message(f"✗ Connection error: {e}")
             messagebox.showerror("Connection Error", f"Connection error: {e}")
@@ -510,16 +509,26 @@ class VWAPReversionGUI:
     def update_account_info(self):
         """Update account information display."""
         try:
-            account = self.trader.get_account()
+            account_info = self.trader.get_account_info()
             positions = self.trader.get_positions()
             
-            self.account_value_var.set(f"${float(account.equity):,.2f}")
-            self.buying_power_var.set(f"${float(account.buying_power):,.2f}")
-            self.cash_var.set(f"${float(account.cash):,.2f}")
-            self.positions_var.set(f"{len(positions)} positions")
+            if account_info:
+                self.account_value_var.set(f"${account_info['equity']:,.2f}")
+                self.buying_power_var.set(f"${account_info['buying_power']:,.2f}")
+                self.cash_var.set(f"${account_info['balance']:,.2f}")
+                self.positions_var.set(f"{len(positions)} positions")
+            else:
+                self.account_value_var.set("Error loading")
+                self.buying_power_var.set("Error loading")
+                self.cash_var.set("Error loading")
+                self.positions_var.set("Error loading")
             
         except Exception as e:
             self.log_message(f"Error updating account info: {e}")
+            self.account_value_var.set("Error")
+            self.buying_power_var.set("Error")
+            self.cash_var.set("Error")
+            self.positions_var.set("Error")
     
     def update_market_status(self):
         """Update market status display."""
