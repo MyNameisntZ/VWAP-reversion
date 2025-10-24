@@ -361,50 +361,84 @@ class VWAPReversionGUI:
         self.symbols_frame = tk.Frame(self.notebook, bg="#ffffff")
         self.notebook.add(self.symbols_frame, text="Symbols")
         
-        # Symbols input
-        symbols_input_frame = tk.Frame(self.symbols_frame, bg="#ffffff")
-        symbols_input_frame.pack(fill="x", padx=20, pady=10)
+        # Title
+        tk.Label(self.symbols_frame, text="Symbol Management", 
+                bg="#ffffff", fg="#000000", font=("Arial", 18, "bold")).pack(pady=20)
         
-        tk.Label(symbols_input_frame, text="Trading Symbols (comma-separated):", 
-                bg="#ffffff", fg="#000000", font=("Arial", 12, "bold")).pack(anchor="w")
+        # Current symbols section
+        current_frame = tk.LabelFrame(self.symbols_frame, text="Current Symbols", 
+                                     bg="#ffffff", fg="#000000", font=("Arial", 12, "bold"))
+        current_frame.pack(fill="both", expand=True, padx=20, pady=10)
         
-        symbols_entry = tk.Entry(symbols_input_frame, textvariable=self.symbols, 
-                                font=("Arial", 10), width=80)
-        symbols_entry.pack(fill="x", pady=5)
+        # Current symbols listbox
+        listbox_frame = tk.Frame(current_frame, bg="#ffffff")
+        listbox_frame.pack(fill="both", expand=True, padx=10, pady=10)
         
-        # Symbol management buttons
-        symbol_buttons_frame = tk.Frame(self.symbols_frame, bg="#ffffff")
-        symbol_buttons_frame.pack(fill="x", padx=20, pady=10)
+        self.symbols_listbox = tk.Listbox(listbox_frame, bg="#f0f0f0", fg="#000000", 
+                                         font=("Arial", 11), height=8)
+        self.symbols_listbox.pack(side="left", fill="both", expand=True)
         
-        add_symbol_btn = tk.Button(symbol_buttons_frame, text="Add Symbol", 
+        # Scrollbar for listbox
+        listbox_scrollbar = tk.Scrollbar(listbox_frame, orient="vertical", command=self.symbols_listbox.yview)
+        self.symbols_listbox.configure(yscrollcommand=listbox_scrollbar.set)
+        listbox_scrollbar.pack(side="right", fill="y")
+        
+        # Update current symbols display
+        self.update_symbols_listbox()
+        
+        # Add/Remove individual symbols section
+        individual_frame = tk.LabelFrame(self.symbols_frame, text="Add/Remove Individual Symbols", 
+                                        bg="#ffffff", fg="#000000", font=("Arial", 12, "bold"))
+        individual_frame.pack(fill="x", padx=20, pady=10)
+        
+        individual_buttons_frame = tk.Frame(individual_frame, bg="#ffffff")
+        individual_buttons_frame.pack(fill="x", padx=10, pady=10)
+        
+        add_symbol_btn = tk.Button(individual_buttons_frame, text="Add Symbol", 
                                   command=self.add_symbol,
-                                  bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
-                                  relief="raised", bd=2, padx=8, pady=3)
-        add_symbol_btn.pack(side="left", padx=(0, 10))
+                                  bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
+                                  relief="flat", padx=15, pady=5)
+        add_symbol_btn.pack(side="left", padx=5)
         
-        remove_symbol_btn = tk.Button(symbol_buttons_frame, text="Remove Symbol", 
+        remove_symbol_btn = tk.Button(individual_buttons_frame, text="Remove Symbol", 
                                      command=self.remove_symbol,
-                                     bg="#aa0000", fg="white", font=("Arial", 9, "bold"),
-                                     relief="raised", bd=2, padx=8, pady=3)
-        remove_symbol_btn.pack(side="left", padx=(0, 10))
+                                     bg="#aa0000", fg="white", font=("Arial", 10, "bold"),
+                                     relief="flat", padx=15, pady=5)
+        remove_symbol_btn.pack(side="left", padx=5)
         
-        import_csv_btn = tk.Button(symbol_buttons_frame, text="Import CSV", 
+        # CSV Import/Export section
+        csv_frame = tk.LabelFrame(self.symbols_frame, text="CSV Import/Export", 
+                                 bg="#ffffff", fg="#000000", font=("Arial", 12, "bold"))
+        csv_frame.pack(fill="x", padx=20, pady=10)
+        
+        csv_buttons_frame = tk.Frame(csv_frame, bg="#ffffff")
+        csv_buttons_frame.pack(fill="x", padx=10, pady=10)
+        
+        import_csv_btn = tk.Button(csv_buttons_frame, text="Import from CSV", 
                                   command=self.import_csv,
-                                  bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
-                                  relief="raised", bd=2, padx=8, pady=3)
-        import_csv_btn.pack(side="left", padx=(0, 10))
+                                  bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
+                                  relief="flat", padx=15, pady=5)
+        import_csv_btn.pack(side="left", padx=5)
         
-        export_csv_btn = tk.Button(symbol_buttons_frame, text="Export CSV", 
+        export_csv_btn = tk.Button(csv_buttons_frame, text="Export to CSV", 
                                   command=self.export_csv,
-                                  bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
-                                  relief="raised", bd=2, padx=8, pady=3)
-        export_csv_btn.pack(side="left", padx=(0, 10))
+                                  bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
+                                  relief="flat", padx=15, pady=5)
+        export_csv_btn.pack(side="left", padx=5)
         
-        remove_all_btn = tk.Button(symbol_buttons_frame, text="Remove All Symbols", 
+        remove_all_btn = tk.Button(csv_buttons_frame, text="Clear All Symbols", 
                                   command=self.remove_all_symbols,
-                                  bg="#aa0000", fg="white", font=("Arial", 9, "bold"),
-                                  relief="raised", bd=2, padx=8, pady=3)
-        remove_all_btn.pack(side="left", padx=(0, 10))
+                                  bg="#dc3545", fg="white", font=("Arial", 10, "bold"),
+                                  relief="flat", padx=15, pady=5)
+        remove_all_btn.pack(side="left", padx=5)
+        
+        # CSV format help
+        help_frame = tk.Frame(csv_frame, bg="#ffffff")
+        help_frame.pack(fill="x", padx=10, pady=5)
+        
+        help_text = "CSV Format: One symbol per line. Example: AAPL, NVDA, TSLA, AMZN, META"
+        tk.Label(help_frame, text=help_text, bg="#ffffff", fg="#666666", 
+                font=("Arial", 9), wraplength=600).pack()
         
         # Profile management
         profile_frame = tk.LabelFrame(self.symbols_frame, text="Profile Management", 
@@ -416,21 +450,21 @@ class VWAPReversionGUI:
         
         save_profile_btn = tk.Button(profile_buttons_frame, text="Save Profile", 
                                     command=self.save_profile,
-                                    bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
-                                    relief="raised", bd=2, padx=8, pady=3)
-        save_profile_btn.pack(side="left", padx=(0, 10))
+                                    bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
+                                    relief="flat", padx=15, pady=5)
+        save_profile_btn.pack(side="left", padx=5)
         
         load_profile_btn = tk.Button(profile_buttons_frame, text="Load Profile", 
                                     command=self.load_profile,
-                                    bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
-                                    relief="raised", bd=2, padx=8, pady=3)
-        load_profile_btn.pack(side="left", padx=(0, 10))
+                                    bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
+                                    relief="flat", padx=15, pady=5)
+        load_profile_btn.pack(side="left", padx=5)
         
         delete_profile_btn = tk.Button(profile_buttons_frame, text="Delete Profile", 
                                       command=self.delete_profile,
-                                      bg="#aa0000", fg="white", font=("Arial", 9, "bold"),
-                                      relief="raised", bd=2, padx=8, pady=3)
-        delete_profile_btn.pack(side="left", padx=(0, 10))
+                                      bg="#aa0000", fg="white", font=("Arial", 10, "bold"),
+                                      relief="flat", padx=15, pady=5)
+        delete_profile_btn.pack(side="left", padx=5)
     
     def setup_logs(self):
         """Setup logs tab."""
@@ -688,17 +722,24 @@ class VWAPReversionGUI:
             self.log_message(f"Error saving settings: {e}")
             messagebox.showerror("Error", f"Error saving settings: {e}")
     
+    def update_symbols_listbox(self):
+        """Update the symbols listbox display."""
+        if hasattr(self, 'symbols_listbox'):
+            self.symbols_listbox.delete(0, tk.END)
+            current_symbols = [s.strip() for s in self.symbols.get().split(",") if s.strip()]
+            for symbol in current_symbols:
+                self.symbols_listbox.insert(tk.END, symbol)
+    
     def add_symbol(self):
         """Add a new symbol."""
         symbol = simpledialog.askstring("Add Symbol", "Enter symbol to add:")
         if symbol:
             symbol = symbol.strip().upper()
-            current_symbols = self.symbols.get()
+            current_symbols = [s.strip() for s in self.symbols.get().split(",") if s.strip()]
             if symbol not in current_symbols:
-                if current_symbols:
-                    self.symbols.set(current_symbols + ", " + symbol)
-                else:
-                    self.symbols.set(symbol)
+                current_symbols.append(symbol)
+                self.symbols.set(", ".join(current_symbols))
+                self.update_symbols_listbox()
                 self.log_message(f"Added symbol: {symbol}")
             else:
                 messagebox.showinfo("Info", f"Symbol {symbol} already exists")
@@ -708,10 +749,11 @@ class VWAPReversionGUI:
         symbol = simpledialog.askstring("Remove Symbol", "Enter symbol to remove:")
         if symbol:
             symbol = symbol.strip().upper()
-            current_symbols = [s.strip() for s in self.symbols.get().split(",")]
+            current_symbols = [s.strip() for s in self.symbols.get().split(",") if s.strip()]
             if symbol in current_symbols:
                 current_symbols.remove(symbol)
                 self.symbols.set(", ".join(current_symbols))
+                self.update_symbols_listbox()
                 self.log_message(f"Removed symbol: {symbol}")
             else:
                 messagebox.showinfo("Info", f"Symbol {symbol} not found")
@@ -731,6 +773,7 @@ class VWAPReversionGUI:
         
         if result:
             self.symbols.set("")
+            self.update_symbols_listbox()
             self.log_message(f"Removed all {len(current_symbols)} symbols")
             messagebox.showinfo("Success", f"Removed all {len(current_symbols)} symbols")
     
@@ -751,6 +794,7 @@ class VWAPReversionGUI:
                 
                 if symbols:
                     self.symbols.set(", ".join(symbols))
+                    self.update_symbols_listbox()
                     self.log_message(f"Imported {len(symbols)} symbols from CSV")
                 else:
                     messagebox.showinfo("Info", "No symbols found in CSV file")
@@ -826,6 +870,7 @@ class VWAPReversionGUI:
                     self.refresh_interval.set(profile_data.get("refresh_interval", "5"))
                     self.auto_refresh.set(profile_data.get("auto_refresh", True))
                     
+                    self.update_symbols_listbox()
                     self.log_message(f"Profile '{profile_name}' loaded successfully")
                     messagebox.showinfo("Success", f"Profile '{profile_name}' loaded successfully")
                 else:
