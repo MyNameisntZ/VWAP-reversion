@@ -241,29 +241,23 @@ class VWAPReversionGUI:
         control_frame = tk.Frame(self.dashboard_frame, bg="#ffffff")
         control_frame.pack(fill="x", padx=20, pady=20)
         
-        # Create buttons with fallback to default style if custom styles fail
-        try:
-            self.connect_btn = ttk.Button(control_frame, text="Connect to Alpaca", 
-                                         command=self.connect_to_alpaca, style="Accent.TButton")
-        except:
-            self.connect_btn = ttk.Button(control_frame, text="Connect to Alpaca", 
-                                         command=self.connect_to_alpaca)
+        # Use regular tkinter buttons instead of ttk for better compatibility
+        self.connect_btn = tk.Button(control_frame, text="Connect to Alpaca", 
+                                    command=self.connect_to_alpaca,
+                                    bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
+                                    relief="raised", bd=2, padx=10, pady=5)
         self.connect_btn.pack(side="left", padx=(0, 10))
         
-        try:
-            self.start_btn = ttk.Button(control_frame, text="Start Bot", 
-                                       command=self.start_bot, style="Success.TButton")
-        except:
-            self.start_btn = ttk.Button(control_frame, text="Start Bot", 
-                                       command=self.start_bot)
+        self.start_btn = tk.Button(control_frame, text="Start Bot", 
+                                  command=self.start_bot,
+                                  bg="#00aa00", fg="white", font=("Arial", 10, "bold"),
+                                  relief="raised", bd=2, padx=10, pady=5)
         self.start_btn.pack(side="left", padx=(0, 10))
         
-        try:
-            self.stop_btn = ttk.Button(control_frame, text="Stop Bot", 
-                                      command=self.stop_bot, style="Danger.TButton")
-        except:
-            self.stop_btn = ttk.Button(control_frame, text="Stop Bot", 
-                                      command=self.stop_bot)
+        self.stop_btn = tk.Button(control_frame, text="Stop Bot", 
+                                 command=self.stop_bot,
+                                 bg="#aa0000", fg="white", font=("Arial", 10, "bold"),
+                                 relief="raised", bd=2, padx=10, pady=5)
         self.stop_btn.pack(side="left", padx=(0, 10))
         
         # Bot status
@@ -356,8 +350,10 @@ class VWAPReversionGUI:
         refresh_interval_combo.grid(row=1, column=1, padx=10, pady=5)
         
         # Save settings button
-        save_btn = ttk.Button(self.settings_frame, text="Save Settings", 
-                             command=self.save_settings, style="Accent.TButton")
+        save_btn = tk.Button(self.settings_frame, text="Save Settings", 
+                            command=self.save_settings,
+                            bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
+                            relief="raised", bd=2, padx=15, pady=5)
         save_btn.pack(pady=20)
     
     def setup_symbols(self):
@@ -380,20 +376,28 @@ class VWAPReversionGUI:
         symbol_buttons_frame = tk.Frame(self.symbols_frame, bg="#ffffff")
         symbol_buttons_frame.pack(fill="x", padx=20, pady=10)
         
-        add_symbol_btn = ttk.Button(symbol_buttons_frame, text="Add Symbol", 
-                                   command=self.add_symbol, style="Accent.TButton")
+        add_symbol_btn = tk.Button(symbol_buttons_frame, text="Add Symbol", 
+                                  command=self.add_symbol,
+                                  bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
+                                  relief="raised", bd=2, padx=8, pady=3)
         add_symbol_btn.pack(side="left", padx=(0, 10))
         
-        remove_symbol_btn = ttk.Button(symbol_buttons_frame, text="Remove Symbol", 
-                                      command=self.remove_symbol, style="Danger.TButton")
+        remove_symbol_btn = tk.Button(symbol_buttons_frame, text="Remove Symbol", 
+                                     command=self.remove_symbol,
+                                     bg="#aa0000", fg="white", font=("Arial", 9, "bold"),
+                                     relief="raised", bd=2, padx=8, pady=3)
         remove_symbol_btn.pack(side="left", padx=(0, 10))
         
-        import_csv_btn = ttk.Button(symbol_buttons_frame, text="Import CSV", 
-                                   command=self.import_csv, style="Accent.TButton")
+        import_csv_btn = tk.Button(symbol_buttons_frame, text="Import CSV", 
+                                  command=self.import_csv,
+                                  bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
+                                  relief="raised", bd=2, padx=8, pady=3)
         import_csv_btn.pack(side="left", padx=(0, 10))
         
-        export_csv_btn = ttk.Button(symbol_buttons_frame, text="Export CSV", 
-                                   command=self.export_csv, style="Accent.TButton")
+        export_csv_btn = tk.Button(symbol_buttons_frame, text="Export CSV", 
+                                  command=self.export_csv,
+                                  bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
+                                  relief="raised", bd=2, padx=8, pady=3)
         export_csv_btn.pack(side="left", padx=(0, 10))
         
         # Profile management
@@ -404,16 +408,22 @@ class VWAPReversionGUI:
         profile_buttons_frame = tk.Frame(profile_frame, bg="#ffffff")
         profile_buttons_frame.pack(fill="x", padx=10, pady=10)
         
-        save_profile_btn = ttk.Button(profile_buttons_frame, text="Save Profile", 
-                                     command=self.save_profile, style="Accent.TButton")
+        save_profile_btn = tk.Button(profile_buttons_frame, text="Save Profile", 
+                                    command=self.save_profile,
+                                    bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
+                                    relief="raised", bd=2, padx=8, pady=3)
         save_profile_btn.pack(side="left", padx=(0, 10))
         
-        load_profile_btn = ttk.Button(profile_buttons_frame, text="Load Profile", 
-                                     command=self.load_profile, style="Accent.TButton")
+        load_profile_btn = tk.Button(profile_buttons_frame, text="Load Profile", 
+                                    command=self.load_profile,
+                                    bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
+                                    relief="raised", bd=2, padx=8, pady=3)
         load_profile_btn.pack(side="left", padx=(0, 10))
         
-        delete_profile_btn = ttk.Button(profile_buttons_frame, text="Delete Profile", 
-                                       command=self.delete_profile, style="Danger.TButton")
+        delete_profile_btn = tk.Button(profile_buttons_frame, text="Delete Profile", 
+                                      command=self.delete_profile,
+                                      bg="#aa0000", fg="white", font=("Arial", 9, "bold"),
+                                      relief="raised", bd=2, padx=8, pady=3)
         delete_profile_btn.pack(side="left", padx=(0, 10))
     
     def setup_logs(self):
@@ -437,12 +447,16 @@ class VWAPReversionGUI:
         log_controls_frame = tk.Frame(self.logs_frame, bg="#ffffff")
         log_controls_frame.pack(fill="x", padx=20, pady=10)
         
-        clear_logs_btn = ttk.Button(log_controls_frame, text="Clear Logs", 
-                                   command=self.clear_logs, style="Accent.TButton")
+        clear_logs_btn = tk.Button(log_controls_frame, text="Clear Logs", 
+                                  command=self.clear_logs,
+                                  bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
+                                  relief="raised", bd=2, padx=8, pady=3)
         clear_logs_btn.pack(side="left", padx=(0, 10))
         
-        export_logs_btn = ttk.Button(log_controls_frame, text="Export Logs", 
-                                    command=self.export_logs, style="Accent.TButton")
+        export_logs_btn = tk.Button(log_controls_frame, text="Export Logs", 
+                                   command=self.export_logs,
+                                   bg="#0b8fce", fg="white", font=("Arial", 9, "bold"),
+                                   relief="raised", bd=2, padx=8, pady=3)
         export_logs_btn.pack(side="left", padx=(0, 10))
     
     def log_message(self, message: str):
