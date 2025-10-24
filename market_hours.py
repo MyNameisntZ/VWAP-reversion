@@ -1,9 +1,9 @@
 """
-Market hours utility for Hybrid-Safe Trading Bot v1.2.
+Market hours utility for VWAP Reversion Trading Bot v1.0.
 Handles market hours detection and trading schedule management.
 
 Author: Trevor Hunter
-Version: 1.2
+Version: 1.0
 """
 
 import pytz
@@ -208,3 +208,16 @@ class MarketHours:
 
 # Global instance
 market_hours = MarketHours()
+
+# Convenience functions for direct import
+def get_market_status(check_time=None):
+    """Get market status using the global instance."""
+    return market_hours.get_market_status(check_time)
+
+def get_next_market_open(check_time=None):
+    """Get next market open time using the global instance."""
+    return market_hours.get_next_market_open(check_time)
+
+def is_market_open(check_time=None):
+    """Check if market is open using the global instance."""
+    return market_hours.is_market_open(check_time)
