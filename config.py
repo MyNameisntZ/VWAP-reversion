@@ -8,19 +8,21 @@ Version: 1.0
 
 import os
 
-# Try to load environment variables from .env file
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    # If dotenv is not available, read .env file manually
-    env_file = '.env'
-    if os.path.exists(env_file):
-        with open(env_file, 'r') as f:
+# Load environment variables from .env file
+env_file = '.env'
+if os.path.exists(env_file):
+    try:
+        with open(env_file, 'r', encoding='utf-8-sig') as f:
             for line in f:
-                if line.strip() and not line.startswith('#'):
-                    key, value = line.strip().split('=', 1)
-                    os.environ[key] = value
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    if '=' in line:
+                        key, value = line.split('=', 1)
+                        os.environ[key.strip()] = value.strip()
+    except Exception as e:
+        print(f"Warning: Could not read .env file: {e}")
+else:
+    print("Warning: .env file not found")
 
 class Config:
     """Configuration class for the trading bot."""
@@ -61,5 +63,5 @@ class Config:
         if not cls.BASE_URL:
             raise ValueError("BASE_URL not found in environment variables")
         
-        print("✓ Configuration validated successfully")
+        print("Configuration validated successfully")
         return True
