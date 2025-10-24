@@ -77,6 +77,8 @@ class VWAPReversionGUI:
         # Market status
         self.market_status_var = tk.StringVar(value="Checking...")
         self.next_open_var = tk.StringVar(value="")
+        self.status_var = tk.StringVar(value="Disconnected")
+        self.last_update_var = tk.StringVar(value="Never")
         
         # Setup GUI
         self.setup_styles()
@@ -195,8 +197,15 @@ class VWAPReversionGUI:
         account_frame = tk.Frame(self.dashboard_frame, bg="#ffffff")
         account_frame.pack(fill="x", padx=20, pady=10)
         
-        tk.Label(account_frame, text="Account Information", bg="#ffffff", fg="#000000", 
-                font=("Arial", 14, "bold")).pack(anchor="w")
+        # Account Information header with horizontal line
+        header_frame = tk.Frame(account_frame, bg="#ffffff")
+        header_frame.pack(fill="x", pady=(0, 10))
+        
+        tk.Label(header_frame, text="Account Information", bg="#ffffff", fg="#000000", 
+                font=("Arial", 14, "bold")).pack(side="left")
+        
+        # Horizontal line extending to the right
+        tk.Frame(header_frame, height=2, bg="#cccccc").pack(side="left", fill="x", expand=True, padx=(10, 0))
         
         # Account details
         account_details_frame = tk.Frame(account_frame, bg="#ffffff")
@@ -206,25 +215,25 @@ class VWAPReversionGUI:
         tk.Label(account_details_frame, text="Account Value:", bg="#ffffff", fg="#000000", 
                 font=("Arial", 12)).grid(row=0, column=0, sticky="w", padx=(0, 10))
         tk.Label(account_details_frame, textvariable=self.account_value_var, bg="#ffffff", 
-                fg="#0b8fce", font=("Arial", 12, "bold")).grid(row=0, column=1, sticky="w")
+                fg="#000000", font=("Arial", 12, "bold")).grid(row=0, column=1, sticky="w")
         
         # Buying power
         tk.Label(account_details_frame, text="Buying Power:", bg="#ffffff", fg="#000000", 
                 font=("Arial", 12)).grid(row=1, column=0, sticky="w", padx=(0, 10))
         tk.Label(account_details_frame, textvariable=self.buying_power_var, bg="#ffffff", 
-                fg="#0b8fce", font=("Arial", 12, "bold")).grid(row=1, column=1, sticky="w")
+                fg="#000000", font=("Arial", 12, "bold")).grid(row=1, column=1, sticky="w")
         
         # Cash
         tk.Label(account_details_frame, text="Cash:", bg="#ffffff", fg="#000000", 
                 font=("Arial", 12)).grid(row=2, column=0, sticky="w", padx=(0, 10))
         tk.Label(account_details_frame, textvariable=self.cash_var, bg="#ffffff", 
-                fg="#0b8fce", font=("Arial", 12, "bold")).grid(row=2, column=1, sticky="w")
+                fg="#000000", font=("Arial", 12, "bold")).grid(row=2, column=1, sticky="w")
         
         # Positions
         tk.Label(account_details_frame, text="Open Positions:", bg="#ffffff", fg="#000000", 
                 font=("Arial", 12)).grid(row=3, column=0, sticky="w", padx=(0, 10))
         tk.Label(account_details_frame, textvariable=self.positions_var, bg="#ffffff", 
-                fg="#0b8fce", font=("Arial", 12, "bold")).grid(row=3, column=1, sticky="w")
+                fg="#000000", font=("Arial", 12, "bold")).grid(row=3, column=1, sticky="w")
         
         # Market Status section
         market_status_frame = tk.Frame(self.dashboard_frame, bg="#ffffff")
@@ -241,6 +250,22 @@ class VWAPReversionGUI:
                                        bg="#ffffff", fg="#666666", font=("Arial", 10))
         self.next_open_label.pack(side="left", padx=20)
         
+        # Status and Last Update (new line)
+        status_frame = tk.Frame(self.dashboard_frame, bg="#ffffff")
+        status_frame.pack(fill="x", padx=20, pady=(0, 10))
+        
+        tk.Label(status_frame, text="Status:", bg="#ffffff", fg="#000000", 
+                font=("Arial", 12, "bold")).pack(side="left")
+        self.status_label = tk.Label(status_frame, textvariable=self.status_var, 
+                                   bg="#ffffff", fg="#ff0000", font=("Arial", 12))
+        self.status_label.pack(side="left", padx=10)
+        
+        tk.Label(status_frame, text="Last Update:", bg="#ffffff", fg="#000000", 
+                font=("Arial", 12, "bold")).pack(side="left", padx=(20, 0))
+        self.last_update_label = tk.Label(status_frame, textvariable=self.last_update_var, 
+                                        bg="#ffffff", fg="#666666", font=("Arial", 12))
+        self.last_update_label.pack(side="left", padx=10)
+        
         # Control buttons
         control_frame = tk.Frame(self.dashboard_frame, bg="#ffffff")
         control_frame.pack(fill="x", padx=20, pady=20)
@@ -254,13 +279,13 @@ class VWAPReversionGUI:
         
         self.start_btn = tk.Button(control_frame, text="Start Bot", 
                                   command=self.start_bot,
-                                  bg="#00aa00", fg="white", font=("Arial", 10, "bold"),
+                                  bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
                                   relief="raised", bd=2, padx=10, pady=5)
         self.start_btn.pack(side="left", padx=(0, 10))
         
         self.stop_btn = tk.Button(control_frame, text="Stop Bot", 
                                  command=self.stop_bot,
-                                 bg="#aa0000", fg="white", font=("Arial", 10, "bold"),
+                                 bg="#0b8fce", fg="white", font=("Arial", 10, "bold"),
                                  relief="raised", bd=2, padx=10, pady=5)
         self.stop_btn.pack(side="left", padx=(0, 10))
         
@@ -623,9 +648,18 @@ class VWAPReversionGUI:
             self.log_message(f"Account: {account.account_number}")
             self.update_account_info()
             self.connect_btn.config(text="Connected", state="disabled")
+            
+            # Update status and last update
+            self.status_var.set("Connected")
+            self.status_label.config(fg="#00aa00")  # Green
+            self.last_update_var.set(time.strftime("%H:%M:%S"))
         except Exception as e:
             self.log_message(f"✗ Connection error: {e}")
             messagebox.showerror("Connection Error", f"Connection error: {e}")
+            
+            # Update status on error
+            self.status_var.set("Disconnected")
+            self.status_label.config(fg="#ff0000")  # Red
     
     def update_account_info(self):
         """Update account information display."""
@@ -638,6 +672,7 @@ class VWAPReversionGUI:
                 self.buying_power_var.set(f"${account_info['buying_power']:,.2f}")
                 self.cash_var.set(f"${account_info['balance']:,.2f}")
                 self.positions_var.set(f"{len(positions)} positions")
+                self.last_update_var.set(time.strftime("%H:%M:%S"))
             else:
                 self.account_value_var.set("Error loading")
                 self.buying_power_var.set("Error loading")
